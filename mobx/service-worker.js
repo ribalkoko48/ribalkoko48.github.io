@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "http://localhost:4002/mobx/precache-manifest.b55f2eab0ecd6caa330fc0dd3abad16f.js"
+  "https://ribalkoko48.github.io/mobx/precache-manifest.00732ab22fa7044d551bf713e95e7eab.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("http://localhost:4002/mobx/index.html", {
+workbox.routing.registerNavigationRoute("https://ribalkoko48.github.io/mobx/index.html", {
   
   blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });
