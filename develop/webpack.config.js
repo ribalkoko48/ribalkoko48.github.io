@@ -2,10 +2,25 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
+//const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const packageJson = require('./package.json');
+
+const [styleLoader, cssLoader, postCssLoader, sassLoader] = [
+    "style-loader",
+    {
+        loader: "css-loader?url=false",
+        options: {
+            modules: {
+                localIdentName: "[path][local]--[hash:base64:5]",
+            },
+        }
+    },
+    "postcss-loader",
+    "sass-loader",
+]
 
 module.exports = (env, {mode}) => {
     const devMode = mode === 'development';
@@ -26,6 +41,7 @@ module.exports = (env, {mode}) => {
         },
 
         devServer: {
+            hot: true,
             historyApiFallback: true,
             compress: true,
             port: 3000,
@@ -36,14 +52,8 @@ module.exports = (env, {mode}) => {
         module: {
             rules: [
                 {
-                    test: /\.(png|jpe?g|gif|woff|woff2|eot|ttf)$/i,
-                    use: [{
-                        options: {
-                            name: '[name].[ext]',
-                            outputPath: 'assets/',
-                        },
-                        loader: 'file-loader',
-                    }],
+                    test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+                    type: "asset",
                 },
                 {
                     test: /\.(ts|tsx|js|jsx)?$/,
@@ -57,43 +67,25 @@ module.exports = (env, {mode}) => {
                 },
                 {
                     test: /\.module.scss$/,
-                    use: [
-                        {
-                            loader: MiniCssExtractPlugin.loader,
-                            options: {
-                                hmr: devMode,
-                                esModule: true,
-                                modules: {
-                                    namedExport: true,
-                                },
-                            },
-                        },
-                        {
-                            loader: 'css-loader?url=false',
-                            options: {
-                                modules: {
-                                    namedExport: true,
-                                    localIdentName: '[path]--[local]__[hash:base64:5]',
-                                },
-                            },
-                        },
-                        'postcss-loader',
-                        'sass-loader',
-                    ],
+                    use: devMode ? [styleLoader, cssLoader, sassLoader] : [styleLoader, cssLoader, postCssLoader, sassLoader]
                 },
             ],
         },
 
         plugins: [
+            new webpack.ProgressPlugin(),
+         /*   new CleanWebpackPlugin({
+                cleanOnceBeforeBuildPatterns: ["../test.js"],
+            }),*/
             new CopyPlugin({
                 patterns: [
-                    { from: "favicon.ico", to: "./favicon.ico" },
+                    {from: "favicon.ico", to: "./favicon.ico"},
                 ],
             }),
-            new MiniCssExtractPlugin({
-                filename: devMode ? '[name].css' : '[name].[hash].css',
-                chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
-            }),
+            /* new MiniCssExtractPlugin({
+                 filename: devMode ? '[name].css' : '[name].[hash].css',
+                 chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+             }),*/
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(packageJson.version),
             }),
