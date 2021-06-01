@@ -1,3 +1,23 @@
+.wrapper {
+    &:before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("/mini cat.webp");
+        background-repeat: no-repeat;
+        z-index: -1;
+        filter: blur(10px);
+        background-size: cover;
+    }
+
+    display: flex;
+    flex-direction: column;
+
+}
+
 .li {
     padding: 20px;
     border-radius: 16px;
